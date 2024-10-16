@@ -3,3 +3,6 @@ q_table.json
 __pycache__
 
 venv
+.env
+logs/
+__pycache__/

@@ -175,13 +175,13 @@ class Grid:
         current_score = self.score
 
         # Perform the action
-        if action == 'w':
+        if action == 0:
             moved = self.move_up()
-        elif action == 's':
+        elif action == 1:
             moved = self.move_down()
-        elif action == 'a':
+        elif action == 2:
             moved = self.move_left()
-        elif action == 'd':
+        elif action == 3:
             moved = self.move_right()
         else:
             raise ValueError("Invalid action")

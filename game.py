@@ -15,20 +15,20 @@ class Solver:
             return True 
     
     def next_move_predictor(self):
-        directions = ['w', 's', 'a', 'd']
-        next_score = {'w': 0, 's': 0, 'a': 0, 'd': 0}
+        directions = [0,1,2,3]
+        next_score = {0: 0, 1: 0, 2: 0, 3: 0}
 
         for direction in directions:
             # grid_copy = [row[:] for row in self.env.grid]
             grid_copy = copy.deepcopy(self.env.grid)
 
-            if direction == 'w':
+            if direction == 0:
                 self.env.move_up(grid_copy)
-            elif direction == 's':
+            elif direction == 1:
                 self.env.move_down(grid_copy)
-            elif direction == 'a':
+            elif direction == 2:
                 self.env.move_left(grid_copy)
-            elif direction == 'd':
+            elif direction == 3:
                 self.env.move_right(grid_copy)
 
             # score = self.expectimax(grid_copy, depth=3, is_chance=True)
@@ -62,17 +62,17 @@ class Solver:
                 total_weight += 0.1
             return total_score / total_weight if total_weight > 0 else 0
         else:
-            directions = ['w', 's', 'a', 'd']
+            directions = [0, 1,2 ,3]
             total_score = 0
             for direction in directions:
                 new_grid = [row[:] for row in grid]
-                if direction == 'w':
+                if direction == 0:
                     self.env.move_up(new_grid)
-                elif direction == 's':
+                elif direction == 1:
                     self.env.move_down(new_grid)
-                elif direction == 'a':
+                elif direction == 2:
                     self.env.move_left(new_grid)
-                elif direction == 'd':
+                elif direction == 3:
                     self.env.move_right(new_grid)
                 score = self.expectimax(new_grid, depth - 1, is_chance=True)
                 total_score += score
@@ -191,13 +191,13 @@ class Solver:
             direction = best_move
             # print(direction)
 
-            if direction == "w":
+            if direction == 0:
                 self.env.move_up()
-            elif direction == "s":
+            elif direction == 1:
                 self.env.move_down()
-            elif direction == "a":
+            elif direction == 2:
                 self.env.move_left()
-            elif direction == "d":
+            elif direction == 3:
                 self.env.move_right()
             self.env.generate_new_cell()
     
