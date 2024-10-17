@@ -1,7 +1,7 @@
 import os
 from numpy import hstack, ndindex
 import numpy as np
-from grid import Grid
+from grid2 import Grid
 import random
 
 import copy

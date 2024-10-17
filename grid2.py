@@ -14,7 +14,7 @@ class Grid:
         pg.init()
         self.myfont = pg.font.SysFont('Arial', 30)
         self.screen_width = 400
-        self.screen_height = 450  # Added height for score display
+        self.screen_height = 450  # Adjusted height for score and game over text
         self.cell_size = self.screen_width // self.size
         self.padding = 10
         self.colors = {
@@ -34,25 +34,53 @@ class Grid:
         self.screen = pg.display.set_mode((self.screen_width, self.screen_height))
         pg.display.set_caption("2048")
 
+        # For animations
+        self.tile_positions = {(i, j): (j * self.cell_size + self.padding, i * self.cell_size + 50 + self.padding)
+                               for i in range(size) for j in range(size)}
+        self.animating_tiles = []  # List to hold tiles in motion
+
     def render(self):
-        self.screen.fill((187, 173, 160))  
+        self.screen.fill((187, 173, 160))  # Background color
         self.handle_events()
 
-        score_text = self.myfont.render(f'Score: {self.score}', True, (255, 255, 255))
-        self.screen.blit(score_text, (10, 10))
+        # Score box styling
+        score_box_width = 380
+        score_box_height = 45
+        score_box_x = 10
+        score_box_y = 10
+        score_box_color = (119, 110, 101)  # Dark background for the score box
+        score_border_color = (255, 255, 255)  # White border for score box
 
+        # Draw the score box with border
+        pg.draw.rect(self.screen, score_border_color, 
+                    (score_box_x - 2, score_box_y - 2, score_box_width + 4, score_box_height + 4), border_radius=10)
+        pg.draw.rect(self.screen, score_box_color, 
+                    (score_box_x, score_box_y, score_box_width, score_box_height), border_radius=10)
+
+        # Render the score text
+        score_text = self.myfont.render(f'Score:   {self.score}', True, (255, 255, 255))  # Title in white
+        
+        # Position text inside the score box
+        self.screen.blit(score_text, (score_box_x + 10, score_box_y + 5))  # "Score" label
+
+        # Draw the grid and cells
         for i in range(self.size):
             for j in range(self.size):
                 value = self.grid[i][j]
-                color = self.colors.get(value, (100, 105, 100))  #
-                pg.draw.rect(self.screen, color, (j * self.cell_size + self.padding,
-                                                  i * self.cell_size + 50 + self.padding,
-                                                  self.cell_size - 2 * self.padding, self.cell_size - 2 * self.padding))
+                color = self.colors.get(value, (100, 105, 100))  # Default to gray for unknown values
+                rect = pg.Rect(j * self.cell_size + self.padding,
+                            i * self.cell_size + 50 + self.padding,
+                            self.cell_size - 2 * self.padding,
+                            self.cell_size - 2 * self.padding)
+                pg.draw.rect(self.screen, color, rect, border_radius=10)
+
                 if value != 0:
-                    text = self.myfont.render(str(value), True, (0, 0, 0))  # Black text
-                    text_rect = text.get_rect(center=(j * self.cell_size + self.cell_size / 2,
-                                                       i * self.cell_size + 50 + self.cell_size / 2))
+                    text = self.myfont.render(str(value), True, (0, 0, 0) if value < 8 else (255, 255, 255))  # Adjust text color
+                    text_rect = text.get_rect(center=(rect.centerx, rect.centery))
                     self.screen.blit(text, text_rect)
+
+        # Handle tile animations
+        self.animate_tiles()
 
         pg.display.flip()
 
@@ -62,26 +90,23 @@ class Grid:
                 pg.quit()
                 quit()
 
-    def is_safe(self, x, y):
-        return 0 <= x < self.size and 0 <= y < self.size and self.grid[x][y] == 0
-    
-    def is_full(self):
-        if self.move_up(copy.deepcopy(self.grid))[0] or self.move_down(copy.deepcopy(self.grid))[0] or \
-           self.move_left(copy.deepcopy(self.grid))[0] or self.move_right(copy.deepcopy(self.grid))[0]:
-            return False
-        return True
-    
-    def reset(self):
-        self.grid = [[0 for _ in range(self.size)] for _ in range(self.size)]
-        self.grid[random.randint(0, self.size - 1)][random.randint(0, self.size - 1)] = 2
-        self.score = 0
-        return copy.deepcopy(self.grid)
+    def animate_tiles(self):
+        for tile in self.animating_tiles:
+            x, y, final_x, final_y, step = tile
+            if step > 0:
+                tile_rect = pg.Rect(x, y, self.cell_size - 2 * self.padding, self.cell_size - 2 * self.padding)
+                pg.draw.rect(self.screen, (255, 0, 0), tile_rect)  # Draw moving tile
+                new_x = x + (final_x - x) // step
+                new_y = y + (final_y - y) // step
+                tile[0], tile[1], tile[4] = new_x, new_y, step - 1
+        # Remove tiles after they've finished animating
+        self.animating_tiles = [tile for tile in self.animating_tiles if tile[4] > 0]
 
-    def generate_new_cell(self):
-        empty_cells = [(i, j) for i in range(self.size) for j in range(self.size) if self.grid[i][j] == 0]
-        if empty_cells:
-            x, y = random.choice(empty_cells)
-            self.grid[x][y] = 2 if random.random() < 0.9 else 4
+    def move_tile_animation(self, x1, y1, x2, y2):
+        initial_pos = self.tile_positions[(x1, y1)]
+        final_pos = self.tile_positions[(x2, y2)]
+        self.animating_tiles.append([initial_pos[0], initial_pos[1], final_pos[0], final_pos[1], 10])  # 10 steps for animation
+
 
     def move_up(self, grid=None):
         if grid is None:
@@ -195,6 +220,28 @@ class Grid:
             self.score += move_score
         return moved, move_score
 
+    def is_safe(self, x, y):
+        return 0 <= x < self.size and 0 <= y < self.size and self.grid[x][y] == 0
+    
+    def is_full(self):
+        if self.move_up(copy.deepcopy(self.grid))[0] or self.move_down(copy.deepcopy(self.grid))[0] or \
+           self.move_left(copy.deepcopy(self.grid))[0] or self.move_right(copy.deepcopy(self.grid))[0]:
+            return False
+        self.flag = 0;
+        return True
+
+    def reset(self):
+        self.grid = [[0 for _ in range(self.size)] for _ in range(self.size)]
+        self.grid[random.randint(0, self.size - 1)][random.randint(0, self.size - 1)] = 2
+        self.score = 0
+        return copy.deepcopy(self.grid)
+
+    def generate_new_cell(self):
+        empty_cells = [(i, j) for i in range(self.size) for j in range(self.size) if self.grid[i][j] == 0]
+        if empty_cells:
+            x, y = random.choice(empty_cells)
+            self.grid[x][y] = 2 if random.random() < 0.9 else 4
+
     def step(self, action):
         current_score = self.score
         
@@ -242,11 +289,11 @@ if __name__ == "__main__":
 
         if moved:
             grid.generate_new_cell()
-
+        
         if grid.is_full():
-            print("Game Over")
-            running = False
-
-        grid.render()
-
-    pg.quit()
+            # Display Game Over
+            game_over_text = grid.myfont.render('Game Over!', True, (255, 0, 0))
+            grid.screen.blit(game_over_text, (grid.screen_width // 2 - 100, grid.screen_height // 2 - 50))
+            pg.display.flip()
+            pg.time.delay(2000)
+            grid.reset()
