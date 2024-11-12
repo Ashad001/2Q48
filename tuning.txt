@@ -1,0 +1,16 @@
+Arguments 
+Tolerance: 0.15 - Training episodes: 100 - Offline updates: 0
+
+Bell state	parameters	number of gates	fidelity	optimality_type
+|00> + |11>	{'discount': 0.5, 'negative_reward': 0, 'positive_reward': 1, 'step_size': 0.0001}	2	0.9330127018922192	num_gates 
+|00> + |11>	{'discount': 0.5, 'negative_reward': 0, 'positive_reward': 100.0, 'step_size': 0.0001}	2	0.9999999999999998	fidelity 
+
+|01> + |10>	{'discount': 0.5, 'negative_reward': 0, 'positive_reward': 50.0, 'step_size': 0.0005}	3	0.9999999999999998	num_gates 
+|01> + |10>	{'discount': 0.5, 'negative_reward': 0, 'positive_reward': 50.0, 'step_size': 0.0001}	5	1.0	fidelity 
+
+|00> - |11>	{'discount': 0.75, 'negative_reward': 0, 'positive_reward': 50.0, 'step_size': 0.0005}	4	0.9999999999999998	num_gates 
+|00> - |11>	{'discount': 0.75, 'negative_reward': 0, 'positive_reward': 50.0, 'step_size': 0.0005}	4	0.9999999999999998	fidelity 
+
+|01> - |10>	{'discount': 0.5, 'negative_reward': 0, 'positive_reward': 50.0, 'step_size': 0.0001}	4	0.9999999999999998	num_gates 
+|01> - |10>	{'discount': 0.5, 'negative_reward': 0, 'positive_reward': 50.0, 'step_size': 0.0001}	4	0.9999999999999998	fidelity 
+

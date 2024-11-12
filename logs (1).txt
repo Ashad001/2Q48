@@ -1,0 +1,47 @@
+TOLERANCE: 0.15
+TRAINING_EPISODES: 100
+STEP_SIZE: 0.0001
+NUM_OFFLINE_UPDATES: 0
+SEED: 100
+NUM_EXPERIMENTS: 5
+
+Approximate state: [0.   +0.j    0.   -0.j    0.707+0.j    0.   -0.707j]
+Target state: [ 0.061-0.079j -0.076-0.032j -0.319+0.697j  0.62 +0.107j]
+Fidelity score: 0.957977813048363. Number of gates: 3
+Gates List: [6, 15, 15]
+q0: ───I──────────Ry(0.5π)───Ry(0.5π)───
+
+q1: ───Rx(0.5π)───I──────────I──────────
+
+Approximate state: [-0.75   0.433 -0.433  0.25 ]
+Target state: [-0.354-0.586j  0.01 +0.525j -0.039-0.398j -0.127+0.28j ]
+Fidelity score: 0.8928560339910102. Number of gates: 3
+Gates List: [17, 14, 12]
+q0: ───Ry(0.333π)───I────────────I───────
+
+q1: ───I────────────Ry(0.667π)───Ry(π)───
+
+Approximate state: [ 0.5+0.j   0. -0.5j  0. -0.5j -0.5+0.j ]
+Target state: [ 0.479+0.037j -0.18 -0.326j -0.188-0.599j -0.307+0.377j]
+Fidelity score: 0.8568451345910139. Number of gates: 2
+Gates List: [6, 5]
+q0: ───I──────────Rx(0.5π)───
+
+q1: ───Rx(0.5π)───I──────────
+
+Approximate state: [0.866 0.    0.5   0.   ]
+Target state: [-0.446-0.773j  0.207-0.12j  -0.185-0.32j   0.086-0.05j ]
+Fidelity score: 0.9171169064088983. Number of gates: 1
+Gates List: [17]
+q0: ───Ry(0.333π)───
+
+q1: ───I────────────
+
+Approximate state: [-0.43 +0.j     0.561+0.j     0.   +0.43j   0.   -0.561j]
+Target state: [ 0.486+0.373j -0.607-0.08j   0.215-0.28j  -0.046+0.351j]
+Fidelity score: 0.8567465343407455. Number of gates: 5
+Gates List: [14, 20, 20, 5, 20]
+q0: ───I────────────I───────────I───────────Rx(0.5π)───I───────────
+
+q1: ───Ry(0.667π)───Ry(0.25π)───Ry(0.25π)───I──────────Ry(0.25π)───
+
