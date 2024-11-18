@@ -1,7 +1,7 @@
 q_table.json
 
 __pycache__
-
+.vs/
 venv
 .env
 logs/
