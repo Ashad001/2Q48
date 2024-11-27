@@ -1,31 +1,115 @@
-# AI Solver for 2048
+# 2Q48: Exploring Quantum Reinforcement Learning in the 2048 Game
 
-## Introduction
+Welcome to the repository for **2Q48**, a project exploring the potential of Quantum Reinforcement Learning (QRL) in solving the popular tile-merging game, 2048. This project compares heuristic, classical reinforcement learning (RL), and quantum RL approaches to evaluate their efficiency, decision-making strategies, and performance in a grid-based environment.
 
-This project aims to develop an AI solver for the game 2048 using heuristic algorithms. The motivation behind this project is to explore heuristic algorithms and their effectiveness in solving complex puzzles like 2048.
+---
 
-## Implementation Details
+## **Motive**
 
-The AI solver is implemented in Python, leveraging the `numpy` library for efficient array manipulations and a custom `Grid` class to manage the game state. The core of the solver revolves around predicting the next best move based on heuristic evaluations of the game grid.
+The goal of this project is to explore the intersection of quantum computing and reinforcement learning by applying them to a complex, strategic decision-making game. By leveraging parameterized quantum circuits, we aim to understand how quantum principles can enhance the representation and optimization of states in an RL framework. While QRL is in its infancy, this project serves as a stepping stone to further investigate its potential in real-world applications and computationally challenging environments.
 
-### Operational Logic
+---
 
-1. **Initialization**: Upon instantiation, the solver initializes the game grid using the specified size, defaulting to a 4x4 grid, which is typical for 2048.
-2. **Move Prediction**: The `next_move_predictor()` method generates a score for each possible move (up, down, left, right) by copying the grid, applying the move, and evaluating the resulting grid using a scoring function.
-3. **Heuristic Scoring**: The scoring is based on multiple heuristics, including the configuration of tiles in a snake-like pattern, the number of adjacent tiles with the same value, and the count of empty tiles.
-4. **Expectimax Algorithm**: An advanced version of the AI could incorporate the expectimax algorithm to simulate deeper game plays, considering both the deterministic game mechanics and the probabilistic nature of new tile appearance.
+## **Installation**
 
-### Heuristic Effectiveness
+### **Requirements**
+- Python 3.8+
+- PennyLane
+- TensorFlow
+- NumPy
+- OpenAI Gym (for the 2048 environment)
 
-- **Snake Pattern Scoring**: Awards higher scores to game states where high-value tiles are arranged in a snake-like pattern.
-- **Adjacent Tiles Scoring**: Encourages moves that cluster similar tiles together.
-- **Empty Tiles Count**: Indicates a healthier game state with more possibilities for movement and tile combination.
+### **Steps**
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Ashad001/2Q48.git
+   cd 2Q48
+   ```
 
-## Results
+2. Create a virtual environment and activate it:
+   ```bash
+   python -m venv env
+   source env/bin/activate  # On Windows: env\Scripts\activate
+   ```
 
-![Screenshot 1](G42.png)
-![Screenshot 2](G5.jpg)
+3. Install the dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-## Conclusion
+4. To train agents, use the script provided by [DineshDhanji](https://github.com/DineshDhanji):
+   ```bash
+   python initialize.py
+   ```
+   The agent training script can be found at [here](https://github.com/DineshDhanji/2Q48/blob/master/initialize.py).
 
-The implementation of heuristic-based strategies within the AI solver for 2048 demonstrates a significant improvement in game performance, aligning with the project's aim to develop an effective AI solution for complex puzzle games. The modular and expandable nature of the solver's design also allows for the easy integration of additional heuristics or alternative algorithms such as deep learning models in the future.
+---
+
+## **Results**
+
+### **Overview**
+The three approaches—heuristic, classical reinforcement learning, and quantum reinforcement learning—were tested to compare their performance in terms of move efficiency, achieved tile values, and overall gameplay behavior. Below are the rendered game outputs and insights from the experiments.
+
+### **Rendered Results**
+- **Heuristic Approach:**  
+  - Consistently reached the 2048 tile in most simulations.  
+  - Demonstrated high efficiency and speed due to its predefined strategy.  
+  ![Heuristic Gameplay](./results/G42_heuristics.png.png)
+
+- **Classical Reinforcement Learning (RL):**  
+  - Achieved moderate success, typically reaching up to the 512 tile.  
+  - Performance was constrained by slower convergence and challenges in handling the dynamic nature of the game.  
+  ![Classical RL Gameplay](./images/.png)
+
+- **Quantum Reinforcement Learning (QRL):**  
+  - Reached a maximum of the 256 tile occasionally.  
+  - Highlighted the potential of quantum circuits but was limited by the computational demands and early-stage development of quantum technologies.  
+  ![QRL Gameplay](./results/QRL_1.png.png)
+
+---
+
+## **Methodology**
+
+### **Heuristic Approach**
+A rule-based algorithm that strategically merges tiles to maximize scores while avoiding early game termination. Its logic ensures fast and efficient gameplay with consistent results.
+
+### **Classical Reinforcement Learning**
+Implemented using Deep Q-Networks (DQNs), this agent learns through exploration and exploitation:
+- A replay buffer stores state-action-reward transitions.
+- Q-values are updated based on Bellman equations using a neural network.
+
+### **Quantum Reinforcement Learning**
+A Quantum Deep Q-Network (QDQN) integrates quantum circuits with classical layers:
+- **Quantum Circuit:** Encodes the state using parameterized quantum gates for decision-making.  
+- **Hybrid Model:** Combines quantum outputs with classical dense layers to predict Q-values.  
+- **Training Pipeline:** Follows traditional RL training with quantum-enhanced computations via PennyLane.  
+
+For more details on the training process, refer to the [initialize.py script](https://github.com/DineshDhanji/2Q48/blob/master/initialize.py).
+
+---
+
+## **Future Work**
+
+1. **Optimizing Quantum Circuits:**  
+   Explore advanced quantum circuit designs and optimization techniques to improve QRL performance.  
+
+2. **Scalability:**  
+   Extend the QRL framework to larger state spaces and more complex decision-making environments.  
+
+3. **Algorithmic Enhancements:**  
+   Integrate quantum-inspired techniques with heuristic and classical RL models for hybrid solutions.  
+
+---
+
+## **Contributions**
+
+The project was a collaborative effort aimed at pushing the boundaries of game-based AI by integrating quantum principles into reinforcement learning strategies. While quantum RL did not outperform classical methods, the insights gained from this project lay the groundwork for future innovations in quantum AI.
+
+---
+
+## **Contact**
+For any queries, please feel free to reach out via [GitHub Issues](https://github.com/Ashad001/2Q48/issues).
+
+--- 
+
+Enjoy exploring the potential of Quantum Computing and Quantum RL with 2Q48!!!!

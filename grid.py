@@ -1,6 +1,8 @@
 import random
 import copy
 import pygame as pg
+import numpy as np
+from numpy import ndindex
 
 class Grid:
     def __init__(self, size):
@@ -10,7 +12,7 @@ class Grid:
 
         self.score = 0
         self.flag = 0
-        
+
         pg.init()
         self.myfont = pg.font.SysFont('Arial', 30)
         self.screen_width = 400
@@ -35,12 +37,8 @@ class Grid:
         pg.display.set_caption("2048")
 
     def render(self):
-        self.screen.fill((187, 173, 160))  
+        self.screen.fill((187, 173, 160))  # Background color
         self.handle_events()
-
-        score_text = self.myfont.render(f'Score: {self.score}', True, (255, 255, 255))
-        self.screen.blit(score_text, (10, 10))
-
         for i in range(self.size):
             for j in range(self.size):
                 value = self.grid[i][j]
@@ -53,7 +51,6 @@ class Grid:
                     text_rect = text.get_rect(center=(j * self.cell_size + self.cell_size / 2,
                                                        i * self.cell_size + 50 + self.cell_size / 2))
                     self.screen.blit(text, text_rect)
-
         pg.display.flip()
 
     def handle_events(self):
@@ -64,13 +61,17 @@ class Grid:
 
     def is_safe(self, x, y):
         return 0 <= x < self.size and 0 <= y < self.size and self.grid[x][y] == 0
-    
+
     def is_full(self):
-        if self.move_up(copy.deepcopy(self.grid))[0] or self.move_down(copy.deepcopy(self.grid))[0] or \
-           self.move_left(copy.deepcopy(self.grid))[0] or self.move_right(copy.deepcopy(self.grid))[0]:
+        if (
+            self.move_up(copy.deepcopy(self.grid))
+            or self.move_down(copy.deepcopy(self.grid))
+            or self.move_left(copy.deepcopy(self.grid))
+            or self.move_right(copy.deepcopy(self.grid))
+        ):
             return False
         return True
-    
+
     def reset(self):
         self.grid = [[0 for _ in range(self.size)] for _ in range(self.size)]
         self.grid[random.randint(0, self.size - 1)][random.randint(0, self.size - 1)] = 2
@@ -87,166 +88,207 @@ class Grid:
         if grid is None:
             grid = self.grid
         moved = False
-        move_score = 0
-        merged = [[False for _ in range(self.size)] for _ in range(self.size)]
-
         for j in range(self.size):
             for i in range(1, self.size):
                 if grid[i][j] == 0:
                     continue
                 x = i
                 while x > 0 and grid[x - 1][j] == 0:
-                    grid[x - 1][j] = grid[x][j]
-                    grid[x][j] = 0
                     x -= 1
-                    moved = True
-                if x > 0 and grid[x - 1][j] == grid[x][j] and not merged[x-1][j] and not merged[x][j]:
+                if x == 0 or (grid[x - 1][j] != grid[i][j]):
+                    grid[x][j] = grid[i][j]
+                    if x != i:
+                        grid[i][j] = 0
+                        moved = True
+                else:
                     grid[x - 1][j] *= 2
-                    move_score += grid[x - 1][j]
-                    grid[x][j] = 0
-                    merged[x-1][j] = True
+                    self.score += grid[x - 1][j]  # adding to total score
+                    grid[i][j] = 0
                     moved = True
-
-        if grid is self.grid and moved:
-            self.score += move_score
-        return moved, move_score
+        return moved
 
     def move_down(self, grid=None):
         if grid is None:
             grid = self.grid
         moved = False
-        move_score = 0
-        merged = [[False for _ in range(self.size)] for _ in range(self.size)]
-
         for j in range(self.size):
             for i in range(self.size - 2, -1, -1):
                 if grid[i][j] == 0:
                     continue
                 x = i
                 while x < self.size - 1 and grid[x + 1][j] == 0:
-                    grid[x + 1][j] = grid[x][j]
-                    grid[x][j] = 0
                     x += 1
-                    moved = True
-                if x < self.size - 1 and grid[x + 1][j] == grid[x][j] and not merged[x+1][j] and not merged[x][j]:
+                if x == self.size - 1 or (grid[x + 1][j] != grid[i][j]):
+                    grid[x][j] = grid[i][j]
+                    if x != i:
+                        grid[i][j] = 0
+                        moved = True
+                else:
                     grid[x + 1][j] *= 2
-                    move_score += grid[x + 1][j]
-                    grid[x][j] = 0
-                    merged[x+1][j] = True
+                    self.score += grid[x + 1][j]  # adding to total score
+                    grid[i][j] = 0
                     moved = True
 
-        if grid is self.grid and moved:
-            self.score += move_score
-        return moved, move_score
+        return moved
 
     def move_left(self, grid=None):
         if grid is None:
             grid = self.grid
         moved = False
-        move_score = 0
-        merged = [[False for _ in range(self.size)] for _ in range(self.size)]
-
-        for i in range(self.size):
-            for j in range(1, self.size):
+        for j in range(self.size):
+            for i in range(self.size):
                 if grid[i][j] == 0:
                     continue
                 x = j
                 while x > 0 and grid[i][x - 1] == 0:
-                    grid[i][x - 1] = grid[i][x]
-                    grid[i][x] = 0
                     x -= 1
-                    moved = True
-                if x > 0 and grid[i][x - 1] == grid[i][x] and not merged[i][x-1] and not merged[i][x]:
+                if x == 0 or (grid[i][x - 1] != grid[i][j]):
+                    grid[i][x] = grid[i][j]
+                    if x != j:
+                        grid[i][j] = 0
+                        moved = True
+                else:
                     grid[i][x - 1] *= 2
-                    move_score += grid[i][x - 1]
-                    grid[i][x] = 0
-                    merged[i][x-1] = True
+                    self.score += grid[i][x - 1]  # adding to total score
+                    grid[i][j] = 0
                     moved = True
-
-        if grid is self.grid and moved:
-            self.score += move_score
-        return moved, move_score
+        return moved
 
     def move_right(self, grid=None):
         if grid is None:
             grid = self.grid
         moved = False
-        move_score = 0
-        merged = [[False for _ in range(self.size)] for _ in range(self.size)]
-
-        for i in range(self.size):
-            for j in range(self.size - 2, -1, -1):
+        for j in range(self.size):
+            for i in range(self.size - 1, -1, -1):
                 if grid[i][j] == 0:
                     continue
                 x = j
                 while x < self.size - 1 and grid[i][x + 1] == 0:
-                    grid[i][x + 1] = grid[i][x]
-                    grid[i][x] = 0
                     x += 1
-                    moved = True
-                if x < self.size - 1 and grid[i][x + 1] == grid[i][x] and not merged[i][x+1] and not merged[i][x]:
+                if x == self.size - 1 or (grid[i][x + 1] != grid[i][j]):
+                    grid[i][x] = grid[i][j]
+                    if x != j:
+                        grid[i][j] = 0
+                        moved = True
+                else:
                     grid[i][x + 1] *= 2
-                    move_score += grid[i][x + 1]
-                    grid[i][x] = 0
-                    merged[i][x+1] = True
+                    self.score += grid[i][x + 1]  # adding to total score
+                    grid[i][j] = 0
                     moved = True
-
-        if grid is self.grid and moved:
-            self.score += move_score
-        return moved, move_score
+        return moved
 
     def step(self, action):
+        # Store the current state before taking the action
+        current_state = copy.deepcopy(self.grid)
         current_score = self.score
-        
+
         # Perform the action
-        if action == 0:
-            moved, points = self.move_up()
-        elif action == 1:
-            moved, points = self.move_down()
-        elif action == 2:
-            moved, points = self.move_left()
-        elif action == 3:
-            moved, points = self.move_right()
+        if action == "w" or action == 0:
+            moved = self.move_up()
+        elif action == "s" or action == 1:
+            moved = self.move_down()
+        elif action == "a" or action == 2:
+            moved = self.move_left()
+        elif action == "d" or action == 3:
+            moved = self.move_right()
         else:
             raise ValueError("Invalid action")
 
         if moved:
             self.generate_new_cell()
-            reward = points  # Reward is the points gained from merging tiles
+
+            reward = self.score - current_score + self.get_score(self.grid) * 0.1
             done = self.is_full()
         else:
-            reward = -0.1  # Small negative reward to discourage invalid moves
+            reward = -0.1
             done = False
 
-        return copy.deepcopy(self.grid), reward, done
+        next_state = copy.deepcopy(self.grid)
+        return next_state, reward, done
+    
+    
+    def score_mean_neighbor(self, newgrid):
+        """
+        Calculate the mean(average) of  tiles with the same values that are adjacent in a row/column.
+        """
+        horizontal_sum, count_horizontal = self.check_adjacent(newgrid)
+        vertical_sum, count_vertical = self.check_adjacent(newgrid.T)
+        if count_horizontal == 0 or count_vertical == 0:
+            return 0
+        return (horizontal_sum + vertical_sum) / (count_horizontal + count_vertical)
 
-if __name__ == "__main__":
-    grid = Grid(4)
-    running = True
-    while running:
-        grid.handle_events()
-        grid.render()
-        pg.time.delay(100)
+
+    def check_adjacent(self, grid):
+        """
+        Returns the sum and total number (count) of tiles with the same values that are adjacent in a row/column.
+        """
+        count = 0
+        total_sum = 0
+        for row in grid:
+            previous = -1
+            for tile in row:
+                if previous == tile:
+                    total_sum += tile
+                    count += 1
+                previous = tile
+        return total_sum, count
+
+
+    def score_count_neighbor(self, grid):
+        _, horizontal_count = self.check_adjacent(grid)
+        _, vertical_count = self.check_adjacent(grid.T)
+        return horizontal_count + vertical_count
+
+
+
+    def get_empty_cells(self, grid):
+        return [(i, j) for i in range(self.size) for j in range(self.size) if grid[i][j] == 0]
+
+
+    def score_adjacent_tiles(self, grid):
+        """
+        The function `score_adjacent_tiles` calculates the average of the scores obtained from counting and
+        finding the mean of neighboring tiles on a grid.
         
-        keys = pg.key.get_pressed()
-        moved = False
-        
-        if keys[pg.K_w]:
-            moved, _ = grid.move_up()
-        elif keys[pg.K_s]:
-            moved, _ = grid.move_down()
-        elif keys[pg.K_a]:
-            moved, _ = grid.move_left()
-        elif keys[pg.K_d]:
-            moved, _ = grid.move_right()
+        """
+        return (self.score_count_neighbor(grid) + self.score_mean_neighbor(grid)) / 2
 
-        if moved:
-            grid.generate_new_cell()
+    def score_snake(self, grid, base_value=0.25):
+        """
+        The function `score_snake` calculates the score of a game grid in a snake-like game by combining
+        values from different directions.
+        """
+        size = len(grid)
+        rewardArray = np.array([base_value ** i for i in range(size ** 2)])
 
-        if grid.is_full():
-            print("Game Over")
-            running = False
+        score = 0
+        for i in range(2):
+            gridArray_horizontal = np.hstack(tuple(grid[j] if i % 2 == 0 else grid[j][::-1] for j in range(size)))
+            score = max(score, np.sum(rewardArray * gridArray_horizontal))
+            score = max(score, np.sum(rewardArray[::-1] * gridArray_horizontal))
+            gridArray_vertical = np.hstack(tuple(grid[j][::-1] if i % 2 == 0 else grid[j] for j in range(size)))
+            score = max(score, np.sum(rewardArray * gridArray_vertical))
+            score = max(score, np.sum(rewardArray[::-1] * gridArray_vertical))
 
-        grid.render()
+            # grid = np.rot90(grid)
+            grid = grid.T
 
-    pg.quit()
+        return score
+
+
+    def calculate_empty_tiles(self, grid):
+        empty_tiles = 0
+        for x, y in ndindex(grid.shape):
+            if grid[x, y] == 0:
+                empty_tiles += 1
+        return empty_tiles
+
+
+    def get_score(self, grid):
+        grid = np.array(grid)
+        adjacent_tiles_score = self.score_adjacent_tiles(grid)
+        snake_score = self.score_snake(grid)
+        empty_tiles = self.calculate_empty_tiles(grid)
+        total_score = (adjacent_tiles_score + 3 * snake_score + empty_tiles) / 6
+        # print("Total Score: ", total_score)
+        return total_score

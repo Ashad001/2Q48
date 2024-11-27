@@ -1,10 +1,11 @@
 import os
 from numpy import hstack, ndindex
 import numpy as np
-from grid2 import Grid
+from grid import Grid
 import random
-
 import copy
+import time
+
 class Solver:
     def __init__(self, size):
         self.size = size
@@ -159,7 +160,7 @@ class Solver:
         adjacent_tiles_score = self.score_adjacent_tiles(grid)
         snake_score = self.score_snake(grid)
         empty_tiles = self.calculate_empty_tiles(grid)
-        total_score = (adjacent_tiles_score + 3 * snake_score + empty_tiles) / 6
+        total_score = (snake_score + adjacent_tiles_score + empty_tiles * 3) / 3
         # print("Total Score: ", total_score)
         return total_score
 
@@ -171,7 +172,7 @@ class Solver:
                 print(self.env.render())
                 if self.env.flag and self.no_moves():
                     print("\n\nX---X---X  GAME OVER  X---X---X\n\n")
-                    input()
+                    time.sleep(7)
                     break
                 os.system("cls")
 
