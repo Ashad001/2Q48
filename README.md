@@ -56,9 +56,9 @@ The three approaches—heuristic, classical reinforcement learning, and quantum 
   ![Heuristic Gameplay](./results/G42_heuristics.png)
 
 - **Classical Reinforcement Learning (RL):**  
-  - Achieved moderate success, typically reaching up to the 512 tile.  
+  - Achieved moderate success, typically reaching up to the 128 tile.  
   - Performance was constrained by slower convergence and challenges in handling the dynamic nature of the game.  
-  ![Classical RL Gameplay](./images/.png)
+  ![Classical RL Gameplay](./results/RL.png.png)
 
 - **Quantum Reinforcement Learning (QRL):**  
   - Reached a maximum of the 256 tile occasionally.  
