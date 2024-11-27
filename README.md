@@ -17,7 +17,6 @@ The goal of this project is to explore the intersection of quantum computing and
 - PennyLane
 - TensorFlow
 - NumPy
-- OpenAI Gym (for the 2048 environment)
 
 ### **Steps**
 1. Clone the repository:
