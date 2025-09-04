@@ -2,7 +2,7 @@
 
 Welcome to the repository for **2Q48**, a project exploring the potential of Quantum Reinforcement Learning (QRL) in solving the popular tile-merging game, 2048. This project compares heuristic, classical reinforcement learning (RL), and quantum RL approaches to evaluate their efficiency, decision-making strategies, and performance in a grid-based environment.
 
----
+---           
 
 ## **Motive**
 
@@ -110,5 +110,6 @@ The project was a collaborative effort aimed at pushing the boundaries of game-b
 For any queries, please feel free to reach out via [GitHub Issues](https://github.com/Ashad001/2Q48/issues).
 
 --- 
+
 
 Enjoy exploring the potential of Quantum Computing and Quantum RL with 2Q48!!!!
